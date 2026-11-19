@@ -7,8 +7,12 @@ import backoff
 import openai
 import google.generativeai as genai
 from google.generativeai.types import GenerationConfig
+from aider.models import Model
 
 MAX_NUM_TOKENS = 4096
+
+AURA_PREFIX = "aura/"
+AURA_TIMEOUT = 1800  # seconds; CPU inference can take many minutes per request
 
 AVAILABLE_LLMS = [
     # Anthropic models
@@ -59,6 +63,8 @@ AVAILABLE_LLMS = [
     "gemini-2.0-flash-thinking-exp-01-21",
     "gemini-2.5-pro-preview-03-25",
     "gemini-2.5-pro-exp-03-25",
+    # Self-hosted OpenAI-compatible server (see docs/aura-llm.md)
+    "aura/qwen3.6:35b-a3b-q4_K_M",
 ]
 
 
@@ -77,7 +83,7 @@ def get_batch_responses_from_llm(
     if msg_history is None:
         msg_history = []
 
-    if 'gpt' in model:
+    if 'gpt' in model and not model.startswith(AURA_PREFIX):
         new_msg_history = msg_history + [{"role": "user", "content": msg}]
         response = client.chat.completions.create(
             model=model,
@@ -152,7 +158,22 @@ def get_response_from_llm(
     if msg_history is None:
         msg_history = []
 
-    if "claude" in model:
+    if model.startswith(AURA_PREFIX):
+        new_msg_history = msg_history + [{"role": "user", "content": msg}]
+        response = client.chat.completions.create(
+            model=model[len(AURA_PREFIX):],
+            messages=[
+                {"role": "system", "content": system_message},
+                *new_msg_history,
+            ],
+            temperature=temperature,
+            max_tokens=MAX_NUM_TOKENS,
+            n=1,
+            stop=None,
+        )
+        content = response.choices[0].message.content
+        new_msg_history = new_msg_history + [{"role": "assistant", "content": content}]
+    elif "claude" in model:
         new_msg_history = msg_history + [
             {
                 "role": "user",
@@ -315,7 +336,14 @@ def extract_json_between_markers(llm_output):
 
 
 def create_client(model):
-    if model.startswith("claude-"):
+    if model.startswith(AURA_PREFIX):
+        print(f"Using aura server with model {model}.")
+        return openai.OpenAI(
+            api_key=os.environ["AURA_LLM_API_KEY"],
+            base_url=os.environ["AURA_LLM_BASE_URL"],
+            timeout=AURA_TIMEOUT,
+        ), model
+    elif model.startswith("claude-"):
         print(f"Using Anthropic API with model {model}.")
         return anthropic.Anthropic(), model
     elif model.startswith("bedrock") and "claude" in model:
@@ -349,3 +377,24 @@ def create_client(model):
         ), model
     else:
         raise ValueError(f"Model {model} not supported.")
+
+
+def create_aider_model(model):
+    """Return an aider Model for the given AI-Scientist model name."""
+    if model == "deepseek-coder-v2-0724":
+        return Model("deepseek/deepseek-coder")
+    elif model == "deepseek-reasoner":
+        return Model("deepseek/deepseek-reasoner")
+    elif model == "llama3.1-405b":
+        return Model("openrouter/meta-llama/llama-3.1-405b-instruct")
+    elif model.startswith(AURA_PREFIX):
+        m = Model("openai/" + model[len(AURA_PREFIX):])
+        m.extra_params = {
+            **(m.extra_params or {}),
+            "api_base": os.environ["AURA_LLM_BASE_URL"],
+            "api_key": os.environ["AURA_LLM_API_KEY"],
+            "timeout": AURA_TIMEOUT,
+        }
+        return m
+    else:
+        return Model(model)

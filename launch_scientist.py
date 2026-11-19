@@ -10,11 +10,10 @@ import time
 import torch
 from aider.coders import Coder
 from aider.io import InputOutput
-from aider.models import Model
 from datetime import datetime
 
 from ai_scientist.generate_ideas import generate_ideas, check_idea_novelty
-from ai_scientist.llm import create_client, AVAILABLE_LLMS
+from ai_scientist.llm import create_client, create_aider_model, AVAILABLE_LLMS, AURA_PREFIX
 from ai_scientist.perform_experiments import perform_experiments
 from ai_scientist.perform_review import perform_review, load_paper, perform_improvement
 from ai_scientist.perform_writeup import perform_writeup, generate_latex
@@ -198,14 +197,7 @@ def do_idea(
         io = InputOutput(
             yes=True, chat_history_file=f"{folder_name}/{idea_name}_aider.txt"
         )
-        if model == "deepseek-coder-v2-0724":
-            main_model = Model("deepseek/deepseek-coder")
-        elif model == "deepseek-reasoner":
-            main_model = Model("deepseek/deepseek-reasoner")
-        elif model == "llama3.1-405b":
-            main_model = Model("openrouter/meta-llama/llama-3.1-405b-instruct")
-        else:
-            main_model = Model(model)
+        main_model = create_aider_model(model)
         coder = Coder.create(
             main_model=main_model,
             fnames=fnames,
@@ -234,14 +226,7 @@ def do_idea(
         if writeup == "latex":
             writeup_file = osp.join(folder_name, "latex", "template.tex")
             fnames = [exp_file, writeup_file, notes]
-            if model == "deepseek-coder-v2-0724":
-                main_model = Model("deepseek/deepseek-coder")
-            elif model == "deepseek-reasoner":
-                main_model = Model("deepseek/deepseek-reasoner")
-            elif model == "llama3.1-405b":
-                main_model = Model("openrouter/meta-llama/llama-3.1-405b-instruct")
-            else:
-                main_model = Model(model)
+            main_model = create_aider_model(model)
             coder = Coder.create(
                 main_model=main_model,
                 fnames=fnames,
@@ -262,13 +247,17 @@ def do_idea(
         print_time()
         print(f"*Starting Review*")
         ## REVIEW PAPER
+        if model.startswith(AURA_PREFIX):
+            review_client, review_model = client, client_model
+        else:
+            review_client, review_model = openai.OpenAI(), "gpt-4o-2024-05-13"
         if writeup == "latex":
             try:
                 paper_text = load_paper(f"{folder_name}/{idea['Name']}.pdf")
                 review = perform_review(
                     paper_text,
-                    model="gpt-4o-2024-05-13",
-                    client=openai.OpenAI(),
+                    model=review_model,
+                    client=review_client,
                     num_reflections=5,
                     num_fs_examples=1,
                     num_reviews_ensemble=5,
@@ -293,8 +282,8 @@ def do_idea(
                 paper_text = load_paper(f"{folder_name}/{idea['Name']}_improved.pdf")
                 review = perform_review(
                     paper_text,
-                    model="gpt-4o-2024-05-13",
-                    client=openai.OpenAI(),
+                    model=review_model,
+                    client=review_client,
                     num_reflections=5,
                     num_fs_examples=1,
                     num_reviews_ensemble=5,
