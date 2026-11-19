@@ -172,3 +172,13 @@ ICLR2022-OpenReviewData/
 templates/*/run_0/
 templates/*/*.png
 results/*
+
+# Multi-KI / Agenten-Normen
+.env*
+secrets/
+*.key
+.normen/
+.normen-auftrag
+*.bak-*
+*.vorlage
+.claude/settings.local.json
