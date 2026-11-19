@@ -4,7 +4,9 @@
 hier alles, was eine frische Sitzung zum Weiterarbeiten braucht: Stand, nächste Aufgaben mit genug Einzelheiten, offene Fragen.
 Nach jeder erledigten Aufgabe wird diese Datei aktualisiert (abhaken, nächste Aufgabe ausformulieren) und mitcommittet.
 
-*Stand: 19.11.2026* – Fork eingerichtet, Server-LLM-Einbindung auf `feat/aura-llm` fertig (wartet auf aura-tools#69 für den Kurztest).
+*Stand: 20.11.2026* – Fork eingerichtet; Server-LLM-Einbindung auf `feat/aura-llm` fertig (PR #2), Kurztest wartet auf die Server-Schnittstelle (Anfrage im privaten Tool-Repo, Issue #69).
+
+**Frische Sitzung:** auf Branch `feat/aura-llm` starten (`main` hat noch den alten Plan), PR #2 offen.
 
 ## Verweise
 
@@ -31,8 +33,8 @@ Nach jeder erledigten Aufgabe wird diese Datei aktualisiert (abhaken, nächste A
 ### 1. Lokale Umgebung – teilweise erledigt (19.11.)
 
 - ✅ `.venv` mit Python 3.11 (`uv venv --python 3.11 .venv`, `uv pip install --python .venv/bin/python -r requirements.txt`); torch 2.15, MPS verfügbar.
-- ✅ Modell entschieden: `qwen3.6:35b-a3b-q4_K_M` auf hel1-aura (Ollama, nur CPU – langsam, reicht für Tests).
-- ⏳ **Blockiert:** Ollama ist vom Mac nicht erreichbar → Schnittstelle angefragt in aura-tools#69 (OpenAI-kompatibel, Token, lange Timeouts). Erst danach weiter mit Aufgabe 2.
+- ✅ Modell entschieden: `qwen3.6:35b-a3b-q4_K_M` auf dem eigenen Server (Ollama, nur CPU – langsam, reicht für Tests).
+- ⏳ **Blockiert:** Ollama ist vom Mac nicht erreichbar → Schnittstelle angefragt (privates Tool-Repo, Issue #69: OpenAI-kompatibel, Token, lange Timeouts). Code für Aufgabe 2 ist trotzdem fertig; nur der Kurztest wartet.
 - ⏳ LaTeX fehlt (`pdflatex` nicht installiert) – erst für das Paper-Schreiben nötig, Installation (BasicTeX/MacTeX) nur nach Rückfrage.
 
 ### 2. Server-LLM in AI-Scientist einbinden – Code fertig (19.11.), Merge wartet auf Kurztest
@@ -48,7 +50,7 @@ Branch `feat/aura-llm` (PR offen, **nicht mergen vor dem Kurztest**). Umgesetzt 
 - Doku: `docs/aura-llm.md`. Variablen: `AURA_LLM_BASE_URL` (inkl. `/v1`), `AURA_LLM_API_KEY`.
 - Geprüft: `make test` ok, `pruefen --diff` 0 Fehler, Offline-Verdrahtung (Dummy-URL → `APIConnectionError`, nicht
   `ValueError`/`KeyError`; Aider-Name/extra_params ok; `OPENAI_API_KEY` unverändert).
-- **Offen:** Kurztest gegen echte Schnittstelle, sobald aura-tools#69 erledigt ist (Variablennamen ggf. an #69 angleichen):
+- **Offen:** Kurztest gegen echte Schnittstelle, sobald Issue #69 erledigt ist (Variablennamen ggf. angleichen):
   `python -m ai_scientist.generate_ideas --model aura/qwen3.6:35b-a3b-q4_K_M --experiment 2d_diffusion`
   (nicht `launch_scientist.py` – das bricht ohne LaTeX vor der Ideenerzeugung ab). Ideendatei prüfen, dann PR per
   `python3 normen/normen.py merge <PR>`. Ungetestet bis dahin: Aider über litellm mit `extra_params` (erst im Vollauf).
