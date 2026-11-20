@@ -35,7 +35,7 @@ Nach jeder erledigten Aufgabe wird diese Datei aktualisiert (abhaken, nächste A
 - ✅ `.venv` mit Python 3.11 (`uv venv --python 3.11 .venv`, `uv pip install --python .venv/bin/python -r requirements.txt`); torch 2.15, MPS verfügbar.
 - ✅ Modell entschieden: `qwen3.6:35b-a3b-q4_K_M` auf dem eigenen Server (Ollama, nur CPU – langsam, reicht für Tests).
 - ⏳ **Blockiert:** Ollama ist vom Mac nicht erreichbar → Schnittstelle angefragt (privates Tool-Repo, Issue #69: OpenAI-kompatibel, Token, lange Timeouts). Code für Aufgabe 2 ist trotzdem fertig; nur der Kurztest wartet.
-- ⏳ LaTeX fehlt (`pdflatex` nicht installiert) – erst für das Paper-Schreiben nötig, Installation (BasicTeX/MacTeX) nur nach Rückfrage.
+- ✅ 20.11. LaTeX: MacTeX 2026 (`mactex-no-gui`, TeX Live 2026) unter `/Library/TeX/texbin` (`pdflatex`, `bibtex`, `chktex`); alle Pakete der `2d_diffusion`-Vorlage vorhanden, Probeübersetzung ok (einziger Fehler: fehlendes `generated_images.png`, entsteht erst im Lauf). In alten Terminals ggf. `eval "$(/usr/libexec/path_helper)"`.
 
 ### 2. Server-LLM in AI-Scientist einbinden – Code fertig (19.11.), Merge wartet auf Kurztest
 
@@ -52,7 +52,7 @@ Branch `feat/aura-llm` (PR offen, **nicht mergen vor dem Kurztest**). Umgesetzt 
   `ValueError`/`KeyError`; Aider-Name/extra_params ok; `OPENAI_API_KEY` unverändert).
 - **Offen:** Kurztest gegen echte Schnittstelle, sobald Issue #69 erledigt ist (Variablennamen ggf. angleichen):
   `python -m ai_scientist.generate_ideas --model aura/qwen3.6:35b-a3b-q4_K_M --experiment 2d_diffusion`
-  (nicht `launch_scientist.py` – das bricht ohne LaTeX vor der Ideenerzeugung ab). Ideendatei prüfen, dann PR per
+  (schneller als `launch_scientist.py`, das sofort auch Experimente und Writeup startet). Ideendatei prüfen, dann PR per
   `python3 normen/normen.py merge <PR>`. Ungetestet bis dahin: Aider über litellm mit `extra_params` (erst im Vollauf).
 - Übergangsweise möglich: SSH-Tunnel auf Ollama (`AURA_LLM_BASE_URL=http://localhost:11434/v1`, Schlüssel beliebig).
 
@@ -62,4 +62,5 @@ Danach Vollauf mit einer Idee. `2d_diffusion` und `grokking` fallen ohne CUDA au
 
 ## Offene Fragen an die Inhaberin
 
-- LaTeX (BasicTeX oder MacTeX) installieren, sobald der erste Vollauf ansteht?
+
+- Keine offen. (LaTeX erledigt 20.11.; PR #2 wartet auf den Server, Merge danach.)
