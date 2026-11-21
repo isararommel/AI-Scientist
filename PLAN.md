@@ -27,6 +27,9 @@ Nach jeder erledigten Aufgabe wird diese Datei aktualisiert (abhaken, nächste A
 ## Erledigt (letzte Schritte)
 
 - ✅ 19.11. Agenten-Normen und Multi-KI-Ablauf eingerichtet – Branch `chore/projekt-einrichten`
+- ✅ 21.11. Normen v14 → v15 (`normen.py aktualisieren`, Quelle claude-tools 06bdfbd); neu `[werkzeuge].vertraut` in
+  `projekt.toml` (hier noch keine Einträge, Freigabe der Inhaberin), Befehle über Variablen werden geprüft. `make test` ok,
+  `pruefen --diff` 0 Fehler. Liegt auf `feat/aura-llm` (kommt mit PR #2 nach `main`).
 
 ## Nächste Aufgaben (in dieser Reihenfolge)
 
