@@ -30,6 +30,9 @@ Nach jeder erledigten Aufgabe wird diese Datei aktualisiert (abhaken, nächste A
 - ✅ 21.11. Normen v14 → v15 (`normen.py aktualisieren`, Quelle claude-tools 06bdfbd); neu `[werkzeuge].vertraut` in
   `projekt.toml` (hier noch keine Einträge, Freigabe der Inhaberin), Befehle über Variablen werden geprüft. `make test` ok,
   `pruefen --diff` 0 Fehler. Liegt auf `feat/aura-llm` (kommt mit PR #2 nach `main`).
+- ✅ 22.11. Normen v15 → v16 (Quelle claude-tools e5b8705): `normen.py` gleicht Pfade an die Schreibweise auf der Platte
+  an (macOS ohne Groß-/Kleinschreibung), neu `selbsttest --sitzung`. `make test` ok, `pruefen --diff` 0 Fehler. Auf
+  `feat/aura-llm`.
 
 ## Nächste Aufgaben (in dieser Reihenfolge)
 
