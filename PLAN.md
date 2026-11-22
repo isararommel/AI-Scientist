@@ -63,6 +63,10 @@ Branch `feat/aura-llm` (PR offen, **nicht mergen vor dem Kurztest**). Umgesetzt 
   `python -m ai_scientist.generate_ideas --model aura/qwen3.6:35b-a3b-q4_K_M --experiment 2d_diffusion`
   (schneller als `launch_scientist.py`, das sofort auch Experimente und Writeup startet). Ideendatei prüfen, dann PR per
   `python3 normen/normen.py merge <PR>`. Ungetestet bis dahin: Aider über litellm mit `extra_params` (erst im Vollauf).
+- ✅ 22.11. Verdrahtung gegen lokales Ollama (Mac, `AURA_LLM_BASE_URL=http://127.0.0.1:11434/v1`, Modell
+  `aura/gemma4:e4b`, ohne `OPENAI_API_KEY`) geprüft: `create_client` + `get_response_from_llm` liefern Antwort und JSON;
+  `create_aider_model(...).send_completion` (Aider 0.86.2, litellm mit `extra_params`) antwortet. Damit ist nur noch das
+  Zusammenspiel mit dem Server und dem qwen-Modell offen. Stand Issue #69: offen, keine Kommentare.
 - Übergang per SSH-Tunnel **geht derzeit nicht** (geprüft 22.11.): Der Server lässt keine Portweiterleitung zu.
   Ollama und das Modell sind dort vorhanden. Falls ein Tunnel später möglich wird: lokal **nicht Port 11434** nehmen
   (dort läuft auf dem Mac ein eigenes Ollama), z. B. 11435, Ziel `127.0.0.1:11434`, dann
