@@ -67,6 +67,7 @@ Branch `feat/aura-llm` (PR offen, **nicht mergen vor dem Kurztest**). Umgesetzt 
   `aura/gemma4:e4b`, ohne `OPENAI_API_KEY`) geprüft: `create_client` + `get_response_from_llm` liefern Antwort und JSON;
   `create_aider_model(...).send_completion` (Aider 0.86.2, litellm mit `extra_params`) antwortet. Damit ist nur noch das
   Zusammenspiel mit dem Server und dem qwen-Modell offen. Stand Issue #69: offen, keine Kommentare.
+  Entscheidung der Inhaberin 22.11.: auf #69 warten, kein lokaler Ideenlauf mit gemma.
 - Übergang per SSH-Tunnel **geht derzeit nicht** (geprüft 22.11.): Der Server lässt keine Portweiterleitung zu.
   Ollama und das Modell sind dort vorhanden. Falls ein Tunnel später möglich wird: lokal **nicht Port 11434** nehmen
   (dort läuft auf dem Mac ein eigenes Ollama), z. B. 11435, Ziel `127.0.0.1:11434`, dann
