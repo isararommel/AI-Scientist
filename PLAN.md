@@ -4,7 +4,9 @@
 hier alles, was eine frische Sitzung zum Weiterarbeiten braucht: Stand, nächste Aufgaben mit genug Einzelheiten, offene Fragen.
 Nach jeder erledigten Aufgabe wird diese Datei aktualisiert (abhaken, nächste Aufgabe ausformulieren) und mitcommittet.
 
-*Stand: 19.11.2026* – Fork eingerichtet (Normen, Hooks, Multi-KI-Ablauf). Noch kein echter Lauf von AI-Scientist.
+*Stand: 20.11.2026* – Fork eingerichtet; Server-LLM-Einbindung auf `feat/aura-llm` fertig (PR #2), Kurztest wartet auf die Server-Schnittstelle (Anfrage im privaten Tool-Repo, Issue #69).
+
+**Frische Sitzung:** auf Branch `feat/aura-llm` starten (`main` hat noch den alten Plan), PR #2 offen.
 
 ## Verweise
 
@@ -25,21 +27,57 @@ Nach jeder erledigten Aufgabe wird diese Datei aktualisiert (abhaken, nächste A
 ## Erledigt (letzte Schritte)
 
 - ✅ 19.11. Agenten-Normen und Multi-KI-Ablauf eingerichtet – Branch `chore/projekt-einrichten`
+- ✅ 21.11. Normen v14 → v15 (`normen.py aktualisieren`, Quelle claude-tools 06bdfbd); neu `[werkzeuge].vertraut` in
+  `projekt.toml` (hier noch keine Einträge, Freigabe der Inhaberin), Befehle über Variablen werden geprüft. `make test` ok,
+  `pruefen --diff` 0 Fehler. Liegt auf `feat/aura-llm` (kommt mit PR #2 nach `main`).
+- ✅ 22.11. Normen v15 → v16 (Quelle claude-tools 395e86a, Merge von PR #30; ein erster Einspielversuch aus dem
+  unfertigen Merge wurde damit ersetzt): Pfade ohne Groß-/Kleinschreibung in allen Sperrlisten, `python3 -m`/Importe
+  werden aufgelöst und geprüft, vertraute Werkzeuge nur für Rolle claude, neu `selbsttest --sitzung`, S06-Text ergänzt.
+  `make test` ok, `pruefen --diff` 0 Fehler. Auf `feat/aura-llm` (kommt mit PR #2 nach `main`). Herkunft belegt
+  (395e86a auf origin/main, sha256 von normen.py/normen.toml = herkunft.toml). Selbsttest nach Neustart: Köder gesperrt,
+  `selbsttest --sitzung` bestanden, `selbsttest` 5/5 Wege gesperrt.
 
 ## Nächste Aufgaben (in dieser Reihenfolge)
 
-### 1. Lokale Umgebung für einen ersten Probelauf
+### 1. Lokale Umgebung – teilweise erledigt (19.11.)
 
-Ziel: AI-Scientist läuft lokal mit einem kleinen Template (z. B. `nanoGPT_lite` oder ein CPU-taugliches Template) bis zur Ideengenerierung.
-Branch: `chore/lokale-umgebung`. Stand: noch nicht begonnen.
-Schritte: 1. `.venv` mit Python 3.11 anlegen (README nennt 3.11; lokal ist 3.13), `pip install -r requirements.txt`.
-2. Prüfen, welches Template ohne CUDA läuft (macOS, keine NVIDIA-GPU); Befund hier notieren.
-3. LaTeX-Bedarf klären (README: `texlive-full`; auf macOS MacTeX/BasicTeX) – nur nach Rückfrage installieren.
-4. Mit der Inhaberin Modell und Budget festlegen, dann `python launch_scientist.py … --num-ideas 1` mit `--skip-novelty-check` testen.
-Fallstricke: API-Schlüssel nur als Umgebungsvariable; Läufe kosten Guthaben; `results/` und `templates/*/run_0/` sind ignoriert.
-Abnahme: `make test`, `python3 normen/normen.py pruefen --diff`, Probelauf-Ausgabe von der Inhaberin bestätigt.
+- ✅ `.venv` mit Python 3.11 (`uv venv --python 3.11 .venv`, `uv pip install --python .venv/bin/python -r requirements.txt`); torch 2.15, MPS verfügbar.
+- ✅ Modell entschieden: `qwen3.6:35b-a3b-q4_K_M` auf dem eigenen Server (Ollama, nur CPU – langsam, reicht für Tests).
+- ⏳ **Blockiert:** Ollama ist vom Mac nicht erreichbar → Schnittstelle angefragt (privates Tool-Repo, Issue #69: OpenAI-kompatibel, Token, lange Timeouts). Code für Aufgabe 2 ist trotzdem fertig; nur der Kurztest wartet.
+- ✅ 20.11. LaTeX: MacTeX 2026 (`mactex-no-gui`, TeX Live 2026) unter `/Library/TeX/texbin` (`pdflatex`, `bibtex`, `chktex`); alle Pakete der `2d_diffusion`-Vorlage vorhanden, Probeübersetzung ok (einziger Fehler: fehlendes `generated_images.png`, entsteht erst im Lauf). In alten Terminals ggf. `eval "$(/usr/libexec/path_helper)"`.
+
+### 2. Server-LLM in AI-Scientist einbinden – Code fertig (19.11.), Merge wartet auf Kurztest
+
+Branch `feat/aura-llm` (PR offen, **nicht mergen vor dem Kurztest**). Umgesetzt von mistral-team, von Claude geprüft:
+- `ai_scientist/llm.py`: `AURA_PREFIX`, `AURA_TIMEOUT = 1800`, Eintrag `aura/qwen3.6:35b-a3b-q4_K_M` in `AVAILABLE_LLMS`;
+  aura-Zweig jeweils **zuerst** in `create_client` / `get_response_from_llm` (Server hat auch `gpt-oss`, das sonst in die
+  Substring-Zweige fiele); `client_model` behält das Präfix, abgeschnitten wird erst im API-Aufruf; Batch läuft über die Schleife.
+  Neu `create_aider_model(model)` für alle drei Aider-Stellen; aura → `openai/<name>` mit `api_base`/`api_key`/`timeout`
+  als `extra_params` (kein Überschreiben von `OPENAI_API_*`).
+- `launch_scientist.py`: Review war fest `gpt-4o` + `openai.OpenAI()` → bei `aura/` jetzt `client`/`client_model` des Laufs
+  (sonst wäre der aura-Token an OpenAI gegangen). `perform_writeup.py`: Aider-Block durch `create_aider_model`.
+- Doku: `docs/aura-llm.md`. Variablen: `AURA_LLM_BASE_URL` (inkl. `/v1`), `AURA_LLM_API_KEY`.
+- Geprüft: `make test` ok, `pruefen --diff` 0 Fehler, Offline-Verdrahtung (Dummy-URL → `APIConnectionError`, nicht
+  `ValueError`/`KeyError`; Aider-Name/extra_params ok; `OPENAI_API_KEY` unverändert).
+- **Offen:** Kurztest gegen echte Schnittstelle, sobald Issue #69 erledigt ist (Variablennamen ggf. angleichen):
+  `python -m ai_scientist.generate_ideas --model aura/qwen3.6:35b-a3b-q4_K_M --experiment 2d_diffusion`
+  (schneller als `launch_scientist.py`, das sofort auch Experimente und Writeup startet). Ideendatei prüfen, dann PR per
+  `python3 normen/normen.py merge <PR>`. Ungetestet bis dahin: Aider über litellm mit `extra_params` (erst im Vollauf).
+- ✅ 22.11. Verdrahtung gegen lokales Ollama (Mac, `AURA_LLM_BASE_URL=http://127.0.0.1:11434/v1`, Modell
+  `aura/gemma4:e4b`, ohne `OPENAI_API_KEY`) geprüft: `create_client` + `get_response_from_llm` liefern Antwort und JSON;
+  `create_aider_model(...).send_completion` (Aider 0.86.2, litellm mit `extra_params`) antwortet. Damit ist nur noch das
+  Zusammenspiel mit dem Server und dem qwen-Modell offen. Stand Issue #69: offen, keine Kommentare.
+- Übergang per SSH-Tunnel **geht derzeit nicht** (geprüft 22.11.): Der Server lässt keine Portweiterleitung zu.
+  Ollama und das Modell sind dort vorhanden. Falls ein Tunnel später möglich wird: lokal **nicht Port 11434** nehmen
+  (dort läuft auf dem Mac ein eigenes Ollama), z. B. 11435, Ziel `127.0.0.1:11434`, dann
+  `AURA_LLM_BASE_URL=http://127.0.0.1:11435/v1`, Schlüssel beliebig. `! export` hält in der Claude-Shell nicht an;
+  Variablen je Aufruf mitgeben.
+
+### 3. Erster Probelauf: Ideen erzeugen mit `2d_diffusion`
+
+Danach Vollauf mit einer Idee. `2d_diffusion` und `grokking` fallen ohne CUDA auf CPU zurück; optional auf MPS umstellen (eigene Aufgabe). `nanoGPT*` braucht CUDA fest.
 
 ## Offene Fragen an die Inhaberin
 
-- Welches LLM (und welches Budget) soll für Probeläufe genutzt werden?
-- Welches Template bzw. welche Fragestellung interessiert dich zum Ausprobieren?
+
+- Keine offen. (LaTeX erledigt 20.11.; PR #2 wartet auf den Server, Merge danach.)

@@ -8,7 +8,7 @@ import subprocess
 from typing import Optional, Tuple
 
 from ai_scientist.generate_ideas import search_for_papers
-from ai_scientist.llm import get_response_from_llm, extract_json_between_markers, create_client, AVAILABLE_LLMS
+from ai_scientist.llm import get_response_from_llm, extract_json_between_markers, create_client, create_aider_model, AVAILABLE_LLMS
 
 
 # GENERATE LATEX
@@ -514,7 +514,6 @@ First, re-think the Title if necessary. Keep this concise and descriptive of the
 
 if __name__ == "__main__":
     from aider.coders import Coder
-    from aider.models import Model
     from aider.io import InputOutput
     import json
 
@@ -556,12 +555,7 @@ if __name__ == "__main__":
         raise ValueError(f"Idea {idea_name} not found")
     fnames = [exp_file, writeup_file, notes]
     io = InputOutput(yes=True, chat_history_file=f"{folder_name}/{idea_name}_aider.txt")
-    if args.model == "deepseek-coder-v2-0724":
-        main_model = Model("deepseek/deepseek-coder")
-    elif args.model == "llama3.1-405b":
-        main_model = Model("openrouter/meta-llama/llama-3.1-405b-instruct")
-    else:
-        main_model = Model(model)
+    main_model = create_aider_model(model)
     coder = Coder.create(
         main_model=main_model,
         fnames=fnames,
