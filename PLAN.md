@@ -57,7 +57,11 @@ Branch `feat/aura-llm` (PR offen, **nicht mergen vor dem Kurztest**). Umgesetzt 
   `python -m ai_scientist.generate_ideas --model aura/qwen3.6:35b-a3b-q4_K_M --experiment 2d_diffusion`
   (schneller als `launch_scientist.py`, das sofort auch Experimente und Writeup startet). Ideendatei prüfen, dann PR per
   `python3 normen/normen.py merge <PR>`. Ungetestet bis dahin: Aider über litellm mit `extra_params` (erst im Vollauf).
-- Übergangsweise möglich: SSH-Tunnel auf Ollama (`AURA_LLM_BASE_URL=http://localhost:11434/v1`, Schlüssel beliebig).
+- Übergang per SSH-Tunnel **geht derzeit nicht** (geprüft 22.11.): Der Server lässt keine Portweiterleitung zu.
+  Ollama und das Modell sind dort vorhanden. Falls ein Tunnel später möglich wird: lokal **nicht Port 11434** nehmen
+  (dort läuft auf dem Mac ein eigenes Ollama), z. B. 11435, Ziel `127.0.0.1:11434`, dann
+  `AURA_LLM_BASE_URL=http://127.0.0.1:11435/v1`, Schlüssel beliebig. `! export` hält in der Claude-Shell nicht an;
+  Variablen je Aufruf mitgeben.
 
 ### 3. Erster Probelauf: Ideen erzeugen mit `2d_diffusion`
 
