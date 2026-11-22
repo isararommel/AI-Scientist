@@ -30,9 +30,14 @@ Nach jeder erledigten Aufgabe wird diese Datei aktualisiert (abhaken, nächste A
 - ✅ 21.11. Normen v14 → v15 (`normen.py aktualisieren`, Quelle claude-tools 06bdfbd); neu `[werkzeuge].vertraut` in
   `projekt.toml` (hier noch keine Einträge, Freigabe der Inhaberin), Befehle über Variablen werden geprüft. `make test` ok,
   `pruefen --diff` 0 Fehler. Liegt auf `feat/aura-llm` (kommt mit PR #2 nach `main`).
-- ✅ 22.11. Normen v15 → v16 (Quelle claude-tools e5b8705): `normen.py` gleicht Pfade an die Schreibweise auf der Platte
-  an (macOS ohne Groß-/Kleinschreibung), neu `selbsttest --sitzung`. `make test` ok, `pruefen --diff` 0 Fehler. Auf
-  `feat/aura-llm`.
+- ⏳ 22.11. Normen v15 → v16 eingespielt (Commit e0b4008, **nicht gepusht**): `normen.py` gleicht Pfade an die
+  Schreibweise auf der Platte an (macOS ohne Groß-/Kleinschreibung), neu `selbsttest --sitzung`, `python3 -m` und
+  Projekt-Importe werden geprüft. `make test` ok, `pruefen --diff` 0 Fehler. **Vorbehalt:** Die Quelle claude-tools stand
+  dabei in einem unfertigen Merge (Branch `paket-v15-hooks`, Konflikte; HEAD hat noch v15) – `herkunft.toml`
+  `commit = "e5b8705"` stimmt daher nicht. Entscheidung der Inhaberin: behalten, nicht pushen.
+  **Nächster Schritt:** Wenn der Merge in claude-tools committet ist: `python3 normen/normen.py aktualisieren`, Diff lesen,
+  `make test`, `pruefen --diff`, committen, dann `feat/aura-llm` pushen. Danach Sitzung im Projektordner neu starten,
+  `touch .normen/normen-koeder.txt` (muss gesperrt werden), `python3 normen/normen.py selbsttest --sitzung`.
 
 ## Nächste Aufgaben (in dieser Reihenfolge)
 
