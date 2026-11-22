@@ -33,7 +33,9 @@ Nach jeder erledigten Aufgabe wird diese Datei aktualisiert (abhaken, nächste A
 - ✅ 22.11. Normen v15 → v16 (Quelle claude-tools 395e86a, Merge von PR #30; ein erster Einspielversuch aus dem
   unfertigen Merge wurde damit ersetzt): Pfade ohne Groß-/Kleinschreibung in allen Sperrlisten, `python3 -m`/Importe
   werden aufgelöst und geprüft, vertraute Werkzeuge nur für Rolle claude, neu `selbsttest --sitzung`, S06-Text ergänzt.
-  `make test` ok, `pruefen --diff` 0 Fehler. Auf `feat/aura-llm` (kommt mit PR #2 nach `main`).
+  `make test` ok, `pruefen --diff` 0 Fehler. Auf `feat/aura-llm` (kommt mit PR #2 nach `main`). Herkunft belegt
+  (395e86a auf origin/main, sha256 von normen.py/normen.toml = herkunft.toml). Selbsttest nach Neustart: Köder gesperrt,
+  `selbsttest --sitzung` bestanden, `selbsttest` 5/5 Wege gesperrt.
 
 ## Nächste Aufgaben (in dieser Reihenfolge)
 
