@@ -4,7 +4,7 @@
 hier alles, was eine frische Sitzung zum Weiterarbeiten braucht: Stand, nächste Aufgaben mit genug Einzelheiten, offene Fragen.
 Nach jeder erledigten Aufgabe wird diese Datei aktualisiert (abhaken, nächste Aufgabe ausformulieren) und mitcommittet.
 
-*Stand: 23.11.2026* – Fork eingerichtet; Server-LLM-Einbindung auf `feat/aura-llm` fertig (PR #2), Kurztest wartet auf die Server-Schnittstelle (Anfrage im privaten Tool-Repo, Issue #69; Stand 23.11.: offen, keine Kommentare; Entscheidung der Inhaberin: weiter warten). `2d_diffusion` ist lauffähig (Basislauf `run_0` da), MPS verworfen.
+*Stand: 23.11.2026* – Normen v17; Fork eingerichtet; Server-LLM-Einbindung auf `feat/aura-llm` fertig (PR #2), Kurztest wartet auf die Server-Schnittstelle (Anfrage im privaten Tool-Repo, Issue #69; Stand 23.11.: offen, keine Kommentare; Entscheidung der Inhaberin: weiter warten). `2d_diffusion` ist lauffähig (Basislauf `run_0` da), MPS verworfen.
 
 **Frische Sitzung:** auf Branch `feat/aura-llm` starten (`main` hat noch den alten Plan), PR #2 offen.
 
@@ -36,6 +36,14 @@ Nach jeder erledigten Aufgabe wird diese Datei aktualisiert (abhaken, nächste A
   `make test` ok, `pruefen --diff` 0 Fehler. Auf `feat/aura-llm` (kommt mit PR #2 nach `main`). Herkunft belegt
   (395e86a auf origin/main, sha256 von normen.py/normen.toml = herkunft.toml). Selbsttest nach Neustart: Köder gesperrt,
   `selbsttest --sitzung` bestanden, `selbsttest` 5/5 Wege gesperrt.
+- ✅ 23.11. Normen v16 → v17 (Quelle claude-tools 3f4f52e = origin/main, PR #42; sha256 = herkunft.toml): Review-Tor in
+  `normen.py merge`, neu `normen.py review`, Teams dürfen `normen.py` nur noch für `pruefen`/`kurz` aufrufen.
+  `[review]` aus der Vorlage in `projekt.toml` (versionsdateien leer); per `multi-ki/einrichten.sh` neu
+  `docs/review-auftrag.md`/`review-bericht.md`, `docs/multi-ki-ablauf.md` durch die Vorlage ersetzt (Abschnitt „Review“;
+  keine Projektbesonderheiten gingen verloren), `.geminiignore` bleibt Projektfassung (Sperrpfade). Label `meilenstein` im
+  Fork angelegt. `make test` ok, `pruefen --diff` 0 Fehler, `selbsttest` 5/5 gesperrt (`--sitzung` erst nach Neustart).
+  **Für PR #2 gilt beim Merge das neue Tor:** ab 150 Code-Zeilen Halt → `normen.py merge 2 --klein "<Grund>"` oder Label
+  `meilenstein` + Review-Bericht `docs/reviews/<datum>-feat-aura-llm.md`.
 
 ## Nächste Aufgaben (in dieser Reihenfolge)
 
