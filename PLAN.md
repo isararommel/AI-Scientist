@@ -4,7 +4,7 @@
 hier alles, was eine frische Sitzung zum Weiterarbeiten braucht: Stand, nächste Aufgaben mit genug Einzelheiten, offene Fragen.
 Nach jeder erledigten Aufgabe wird diese Datei aktualisiert (abhaken, nächste Aufgabe ausformulieren) und mitcommittet.
 
-*Stand: 20.11.2026* – Fork eingerichtet; Server-LLM-Einbindung auf `feat/aura-llm` fertig (PR #2), Kurztest wartet auf die Server-Schnittstelle (Anfrage im privaten Tool-Repo, Issue #69).
+*Stand: 23.11.2026* – Fork eingerichtet; Server-LLM-Einbindung auf `feat/aura-llm` fertig (PR #2), Kurztest wartet auf die Server-Schnittstelle (Anfrage im privaten Tool-Repo, Issue #69; Stand 23.11.: offen, keine Kommentare; Entscheidung der Inhaberin: weiter warten). `2d_diffusion` ist lauffähig (Basislauf `run_0` da), MPS verworfen.
 
 **Frische Sitzung:** auf Branch `feat/aura-llm` starten (`main` hat noch den alten Plan), PR #2 offen.
 
@@ -76,7 +76,16 @@ Branch `feat/aura-llm` (PR offen, **nicht mergen vor dem Kurztest**). Umgesetzt 
 
 ### 3. Erster Probelauf: Ideen erzeugen mit `2d_diffusion`
 
-Danach Vollauf mit einer Idee. `2d_diffusion` und `grokking` fallen ohne CUDA auf CPU zurück; optional auf MPS umstellen (eigene Aufgabe). `nanoGPT*` braucht CUDA fest.
+Danach Vollauf mit einer Idee. `2d_diffusion` und `grokking` fallen ohne CUDA auf CPU zurück. `nanoGPT*` braucht CUDA fest.
+
+- ✅ 23.11. Vorbereitung `2d_diffusion`: Pakete laut README mit Freigabe der Inhaberin in `.venv` installiert
+  (NPEET fest auf Commit `8b0d948` per `uv pip install "git+https://github.com/gregversteeg/NPEET.git@8b0d948…"`,
+  scikit-learn 1.9.1; stehen nicht in `requirements.txt`, bei neuer `.venv` wiederholen). Basislauf
+  `templates/2d_diffusion/run_0` + `plot.py` erzeugt (CPU, 143 s; KL circle 0,36 / dino 1,05 / line 0,18 / moons 0,08;
+  `run_0/` und PNGs sind ignoriert).
+- ❌ 23.11. MPS verworfen: Messung mit 1000 Schritten, CPU 33 s gegenüber MPS 34 s gesamt; Training je Datensatz auf
+  MPS langsamer (4,3 s statt 3,3 s), nur Inferenz etwas schneller; Großteil der Zeit ist die KL-Schätzung (NPEET, CPU).
+  Kleines MLP auf 2D-Punkten lohnt MPS nicht → Vorlage bleibt unverändert. `grokking` ggf. später eigens messen.
 
 ## Offene Fragen an die Inhaberin
 
