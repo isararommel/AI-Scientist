@@ -36,12 +36,13 @@ Nach jeder erledigten Aufgabe wird diese Datei aktualisiert (abhaken, nächste A
   `make test` ok, `pruefen --diff` 0 Fehler. Auf `feat/aura-llm` (kommt mit PR #2 nach `main`). Herkunft belegt
   (395e86a auf origin/main, sha256 von normen.py/normen.toml = herkunft.toml). Selbsttest nach Neustart: Köder gesperrt,
   `selbsttest --sitzung` bestanden, `selbsttest` 5/5 Wege gesperrt.
-- ✅ 23.11. Normen v16 → v17 (Quelle claude-tools 3f4f52e = origin/main, PR #42; sha256 = herkunft.toml): Review-Tor in
+- ✅ 23.11. Normen v16 → v17 (Quelle claude-tools 3f4f52e = Merge-Commit von PR #42, laut `gh pr view` MERGED; Blob-SHAs
+  von `normen.py`/`normen.toml` = GitHub-Inhalt bei 3f4f52e): Review-Tor in
   `normen.py merge`, neu `normen.py review`, Teams dürfen `normen.py` nur noch für `pruefen`/`kurz` aufrufen.
   `[review]` aus der Vorlage in `projekt.toml` (versionsdateien leer); per `multi-ki/einrichten.sh` neu
   `docs/review-auftrag.md`/`review-bericht.md`, `docs/multi-ki-ablauf.md` durch die Vorlage ersetzt (Abschnitt „Review“;
   keine Projektbesonderheiten gingen verloren), `.geminiignore` bleibt Projektfassung (Sperrpfade). Label `meilenstein` im
-  Fork angelegt. `make test` ok, `pruefen --diff` 0 Fehler, `selbsttest` 5/5 gesperrt (`--sitzung` erst nach Neustart).
+  Fork angelegt. `make test` ok, `pruefen --diff` 0 Fehler, `selbsttest` 5/5 gesperrt, `selbsttest --sitzung` bestanden.
   **Für PR #2 gilt beim Merge das neue Tor:** ab 150 Code-Zeilen Halt → `normen.py merge 2 --klein "<Grund>"` oder Label
   `meilenstein` + Review-Bericht `docs/reviews/<datum>-feat-aura-llm.md`.
 
